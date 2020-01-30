@@ -1,5 +1,5 @@
-dist
-test_data
-build
-.vscode
-__pycache__
+dist/
+test_data/
+build/
+.vscode/
+__pycache__/
