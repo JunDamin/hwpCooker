@@ -18,8 +18,8 @@ def convert_to_string(num, belowZeroDigit=0, thousand=True):
     """ Change number_format which is for Using in Koica"""
 
     null_list = [" 00:00:00", "1900-01-01 "]
-    num_form = f",.{belowZeroDigit}f" if thousand else f".{belowZeroDigit}f"  
-    
+    num_form = f",.{belowZeroDigit}f" if thousand else f".{belowZeroDigit}f"
+
     if type(num) in [int, float, float64]:
         if num > 0:
             output = format(num, num_form)
@@ -41,7 +41,7 @@ def replace_text(root, old, new):
     for char in root.iter("CHAR"):
         string = char.text
         if not string:
-            string=""
+            string = ""
         if string.find(old) != -1:
             p = char.getparent().getparent()
 
@@ -52,7 +52,7 @@ def replace_text(root, old, new):
                 for char in new_p.iter("CHAR"):
                     string = char.text
                     if not string:
-                        string=""
+                        string = ""
                     new_text = string
                     print(old, ":", new)
                     new_text = new_text.replace(old, new)
@@ -63,11 +63,9 @@ def replace_text(root, old, new):
     return root
 
 
-
 def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
 
     """ Pandas DataSeries Works"""
-
 
     print("\n 파일명 :", pd_series[name], "\n")
 
@@ -76,7 +74,7 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
         new = pd_series[i]
         if not new or type(new) in [pd._libs.tslibs.nattype.NaTType]:
             new = ""
-        
+
         if old.find("__") != -1:
             new = convert_to_string(new, "", False)
         else:
@@ -89,20 +87,24 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
 def generate_hml(hml_address, data, output_path, name="파일명", belowZeroDigit=0, thousand=True):
 
     """ generate hml files """
-    
+
+    file_addr_list = []
 
     for i in data.index:
         tree = et.parse(hml_address)
         root = tree.getroot()
         root = replace_doc(root, data.loc[i], name, belowZeroDigit, thousand)
         tree = root.getroottree()
-        
+
         filename = data.loc[i][name]
         if len(filename) == 0:
-            filename = "제목없음"        
+            filename = "제목없음"
         elif type(filename) != str:
             filename = str(filename)
 
         filename = prettify_filename(data.loc[i][name])
         file_address = os.path.join(output_path, filename + '.hml')
         tree.write(file=file_address, xml_declaration=True, encoding='utf8')
+        file_addr_list.append(file_address.replace("\\", "/")[:-3]+"hwp")
+
+    return file_addr_list

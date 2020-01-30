@@ -3,7 +3,7 @@
 block_cipher = None
 
 
-a = Analysis(['hwpcookergui.py'],
+a = Analysis(['hwpCookerGUI.py'],
              pathex=['C:\\Users\\user\\Documents\\Python Scripts\\HwpCooker'],
              binaries=[],
              datas=[],
@@ -23,11 +23,11 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='hwpcookergui',
+          name='hwpCookerGUI',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True )
+          console=False )

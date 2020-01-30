@@ -2,7 +2,7 @@ import os
 import time
 import PySimpleGUI as sg
 import pandas as pd
-from lxml import etree as et
+import xlwings as xw
 from hwpCookerModel import generate_hml
 import hwpTool as ht
 
@@ -19,14 +19,20 @@ sg.change_look_and_feel("TanBlue")
 layout = [
     [sg.Text("자동입력용 데이터 선택")],
     [sg.Input(size=(70, 5)), sg.FileBrowse(button_text="데이터선택")],
+    [sg.Button(button_text="데이터열기", key="OpenData")],
     [sg.Text("한글 탬플릿 선택")],
     [sg.Input(size=(70, 5)), sg.FileBrowse(button_text="탬플릿선택")],
+    [sg.Button(button_text="탬플릿열기", key="OpenTemp")],
     [
         sg.InputCombo(("소수점없음", "첫째 자리", "둘째 자리"), size=(20, 1), default_value="소수점없음"),
-        sg.Checkbox("천단위 구분", size=(10, 1), default=True), 
+        sg.Checkbox("천단위 구분", size=(10, 1), default=True),
     ],
     [sg.Output(size=(80, 20))],
-    [sg.Button(button_text="굽기", key="OK"), sg.Button(button_text="종료", key="Cancel"),],
+    [
+        sg.Button(button_text="굽기", key="OK"),
+        sg.Button(button_text="종료", key="Cancel"),
+        sg.Button("테스트페이지", key="Test"),
+    ],
 ]
 
 window = sg.Window("빵틀 v.0.2", icon="icon\\email.ico", layout=layout)
@@ -61,18 +67,60 @@ while True:
     event, values = window.read()
     if event in (None, "Cancel"):
         break
-    if event == "OK":
 
+    if event == "OpenTemp":
+        ht.open_hwp_file(values[1])
+
+    if event == "OpenData":
+        xw.Book(values[0])
+
+    if event == "Test":
+
+        """ 기능을 리팩토링해야 함. 그리고 해당 파일을 열 수 있도록 코드도 정리해야 함"""
         if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
             data = pd.read_excel(values[0])
         else:
             print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
             continue
 
-        # 변환자료 생성 위치    
+        # 변환자료 생성 위치
         output_path = ht.check_output_path(os.path.split(values[0])[0])
 
-        # 자리수 입력 변환 
+        # 자리수 입력 변환
+        digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
+        digit = digit_check.index(values[2])
+
+        if os.path.splitext(values[1])[1] in [".hwp"]:
+            hml_address = ht.convert_to_hml(values[1])
+        else:
+            print("오류: 탬플릿 파일은 hwp형식만 가능합니다.")
+            continue
+
+        file_addr_list = generate_hml(
+            hml_address,
+            data.iloc[:1],
+            output_path,
+            name="파일명",
+            belowZeroDigit=digit,
+            thousand=values[3],
+        )
+        time.sleep(1)
+        ht.convert_to_hwps(output_path)
+        os.remove(hml_address)
+
+        ht.open_hwp_file(file_addr_list[0])
+
+    if event == "OK":
+        if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
+            data = pd.read_excel(values[0])
+        else:
+            print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
+            continue
+
+        # 변환자료 생성 위치
+        output_path = ht.check_output_path(os.path.split(values[0])[0])
+
+        # 자리수 입력 변환
         digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
         digit = digit_check.index(values[2])
 

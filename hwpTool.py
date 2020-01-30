@@ -1,5 +1,4 @@
 import os
-import time
 from hwp_api_class import HwpApi
 
 
@@ -21,7 +20,7 @@ def convert_to_hwps(folder_address):
     ]
 
     for hml in hml_list:
-        hwp_address = hwpapi.hwpOpen(hml)
+        hwpapi.hwpOpen(hml)
         hwpapi.hwpSaveAs(hml, save_ext=".hwp")
         hwpapi.hwpFileClose()
         os.remove(hml)
@@ -32,6 +31,11 @@ def check_output_path(data_path):
 
     output_path = os.path.join(data_path, "output")
     if not os.path.isdir(output_path):
-        os.mkdir(os.path.join(output_path, "output"))
+        os.mkdir(output_path)
 
     return output_path
+
+
+def open_hwp_file(hwp_address):
+    hwpapi = HwpApi()
+    hwpapi.hwpOpen(hwp_address)
