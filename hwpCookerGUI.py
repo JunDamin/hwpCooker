@@ -8,10 +8,14 @@ import hwpTool as ht
 
 
 
-""" """
+"""
+데이터를 입력받고 생성된 HML 파일을 HWP로 바꾼다.
+"""
 
 def validate_values(values):
-    """ 기능을 리팩토링해야 함. 그리고 해당 파일을 열 수 있도록 코드도 정리해야 함"""
+
+    """ 데이터 형식을 실행하기 전에 검토하는 기능임 """
+
     if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
         data = pd.read_excel(values[0])
     else:
@@ -35,7 +39,7 @@ def validate_values(values):
 
 """
 
-아래는 GUI다.
+아래는 GUI구성
 
 """
 
@@ -71,7 +75,7 @@ openText = """
 환경
 
 1. 아래아한글이 설치되어 있어야 합니다.
-2. 엑셀 첫번째 행에 "파일명"이라는 값이 있어야 합니다.
+2. 엑셀 첫번째 행에 "__파일명__"이라는 셀이 있어야 합니다.
 
 주요
 1. 엑셀 첫번째 행 값을 탬플릿에서 찾아 바꾸어줍니다.
@@ -89,6 +93,7 @@ endText = """
 
 window.read(timeout=10)
 print(openText)
+col_name = "__파일명__"
 
 while True:
     event, values = window.read()
@@ -112,15 +117,17 @@ while True:
                 hml_address,
                 data.iloc[0],
                 output_path,
-                name="파일명",
+                name=col_name,
                 belowZeroDigit=digit,
                 thousand=values[3],
             )
             time.sleep(0.2)
             ht.convert_to_hwps(output_path)
             os.remove(hml_address)
+            #출력하기
             print(endText.format(1))
             window.refresh()
+            #생성된 파일 열기
             ht.open_hwp_file(file_addr)
 
     if event == "OK":
@@ -136,7 +143,7 @@ while True:
                     hml_address,
                     data.loc[i],
                     output_path,
-                    name="파일명",
+                    name=col_name,
                     belowZeroDigit=digit,
                     thousand=values[3],
                 )
@@ -145,7 +152,7 @@ while True:
                 progress += 1
                 window['progbar'].update_bar(int(progress/file_num*1000))
                 ht.convert_to_hwps(output_path)
-                
+            # Template 삭제
             os.remove(hml_address)
             print(endText.format(len(data)))
 

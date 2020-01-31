@@ -36,7 +36,7 @@ def convert_to_string(num, belowZeroDigit=0, thousand=True):
 
 def replace_text(root, old, new):
 
-    """ find char that match """
+    """ find char that match and replace text"""
 
     for char in root.iter("CHAR"):
         string = char.text
@@ -86,7 +86,7 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
 
 def generate_hml(hml_address, data_series, output_path, name="파일명", belowZeroDigit=0, thousand=True):
 
-    """ generate hml files """
+    """ generate hml files. Return generated hml address"""
 
     tree = et.parse(hml_address)
     root = tree.getroot()
