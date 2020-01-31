@@ -84,27 +84,24 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
     return root
 
 
-def generate_hml(hml_address, data, output_path, name="파일명", belowZeroDigit=0, thousand=True):
+def generate_hml(hml_address, data_series, output_path, name="파일명", belowZeroDigit=0, thousand=True):
 
     """ generate hml files """
 
-    file_addr_list = []
+    tree = et.parse(hml_address)
+    root = tree.getroot()
+    root = replace_doc(root, data_series, name, belowZeroDigit, thousand)
+    tree = root.getroottree()
 
-    for i in data.index:
-        tree = et.parse(hml_address)
-        root = tree.getroot()
-        root = replace_doc(root, data.loc[i], name, belowZeroDigit, thousand)
-        tree = root.getroottree()
+    filename = data_series[name]
+    if len(filename) == 0:
+        filename = "제목없음"
+    elif type(filename) != str:
+        filename = str(filename)
 
-        filename = data.loc[i][name]
-        if len(filename) == 0:
-            filename = "제목없음"
-        elif type(filename) != str:
-            filename = str(filename)
+    filename = prettify_filename(data_series[name])
+    file_address = os.path.join(output_path, filename + '.hml')
+    tree.write(file=file_address, xml_declaration=True, encoding='utf8')
+    file_addr = file_address.replace("\\", "/")[:-3]+"hwp"
 
-        filename = prettify_filename(data.loc[i][name])
-        file_address = os.path.join(output_path, filename + '.hml')
-        tree.write(file=file_address, xml_declaration=True, encoding='utf8')
-        file_addr_list.append(file_address.replace("\\", "/")[:-3]+"hwp")
-
-    return file_addr_list
+    return file_addr

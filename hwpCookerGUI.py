@@ -7,6 +7,32 @@ from hwpCookerModel import generate_hml
 import hwpTool as ht
 
 
+
+""" """
+
+def validate_values(values):
+    """ 기능을 리팩토링해야 함. 그리고 해당 파일을 열 수 있도록 코드도 정리해야 함"""
+    if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
+        data = pd.read_excel(values[0])
+    else:
+        print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
+        return None
+
+    # 변환자료 생성 위치
+    output_path = ht.check_output_path(os.path.split(values[0])[0])
+
+    # 자리수 입력 변환
+    digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
+    digit = digit_check.index(values[2])
+
+    if os.path.splitext(values[1])[1] in [".hwp"]:
+        hml_address = ht.convert_to_hml(values[1])
+    else:
+        print("오류: 탬플릿 파일은 hwp형식만 가능합니다.")
+        return None
+
+    return data, output_path, digit, hml_address
+
 """
 
 아래는 GUI다.
@@ -28,10 +54,11 @@ layout = [
         sg.Checkbox("천단위 구분", size=(10, 1), default=True),
     ],
     [sg.Output(size=(80, 20))],
+    [sg.ProgressBar(1000, orientation='h', size=(48.5, 20), key='progbar')],
     [
         sg.Button(button_text="굽기", key="OK"),
-        sg.Button(button_text="종료", key="Cancel"),
         sg.Button("테스트페이지", key="Test"),
+        sg.Button(button_text="종료", pad=((400,0), 3), key="Cancel"),
     ],
 ]
 
@@ -76,71 +103,50 @@ while True:
 
     if event == "Test":
 
-        """ 기능을 리팩토링해야 함. 그리고 해당 파일을 열 수 있도록 코드도 정리해야 함"""
-        if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
-            data = pd.read_excel(values[0])
-        else:
-            print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
-            continue
+        if validate_values(values):
+            data, output_path, digit, hml_address = validate_values(values)
 
-        # 변환자료 생성 위치
-        output_path = ht.check_output_path(os.path.split(values[0])[0])
+            print("[테스트 페이지 인쇄]")
 
-        # 자리수 입력 변환
-        digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
-        digit = digit_check.index(values[2])
-
-        if os.path.splitext(values[1])[1] in [".hwp"]:
-            hml_address = ht.convert_to_hml(values[1])
-        else:
-            print("오류: 탬플릿 파일은 hwp형식만 가능합니다.")
-            continue
-
-        file_addr_list = generate_hml(
-            hml_address,
-            data.iloc[:1],
-            output_path,
-            name="파일명",
-            belowZeroDigit=digit,
-            thousand=values[3],
-        )
-        time.sleep(1)
-        ht.convert_to_hwps(output_path)
-        os.remove(hml_address)
-
-        ht.open_hwp_file(file_addr_list[0])
+            file_addr = generate_hml(
+                hml_address,
+                data.iloc[0],
+                output_path,
+                name="파일명",
+                belowZeroDigit=digit,
+                thousand=values[3],
+            )
+            time.sleep(0.2)
+            ht.convert_to_hwps(output_path)
+            os.remove(hml_address)
+            print(endText.format(1))
+            window.refresh()
+            ht.open_hwp_file(file_addr)
 
     if event == "OK":
-        if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
-            data = pd.read_excel(values[0])
-        else:
-            print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
-            continue
 
-        # 변환자료 생성 위치
-        output_path = ht.check_output_path(os.path.split(values[0])[0])
+        if validate_values(values):
+            data, output_path, digit, hml_address = validate_values(values)
 
-        # 자리수 입력 변환
-        digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
-        digit = digit_check.index(values[2])
+            file_num = len(data)
+            progress = 0
 
-        if os.path.splitext(values[1])[1] in [".hwp"]:
-            hml_address = ht.convert_to_hml(values[1])
-        else:
-            print("오류: 탬플릿 파일은 hwp형식만 가능합니다.")
-            continue
-
-        generate_hml(
-            hml_address,
-            data,
-            output_path,
-            name="파일명",
-            belowZeroDigit=digit,
-            thousand=values[3],
-        )
-        time.sleep(1)
-        ht.convert_to_hwps(output_path)
-        os.remove(hml_address)
-        print(endText.format(len(data)))
+            for i in data.index:
+                generate_hml(
+                    hml_address,
+                    data.loc[i],
+                    output_path,
+                    name="파일명",
+                    belowZeroDigit=digit,
+                    thousand=values[3],
+                )
+                window.refresh()
+                time.sleep(0.2)
+                progress += 1
+                window['progbar'].update_bar(int(progress/file_num*1000))
+                ht.convert_to_hwps(output_path)
+                
+            os.remove(hml_address)
+            print(endText.format(len(data)))
 
 window.close()
