@@ -26,7 +26,7 @@ def validate_values(values):
     output_path = ht.check_output_path(os.path.split(values[0])[0])
 
     # 자리수 입력 변환
-    digit_check = list(("소수점없음", "첫째 자리", "둘째 자리"))
+    digit_check = list(("소수점없음", "첫째 자리", "둘째 자리", "셋째 자리", "넷째 자리", "다섯째 자리"))
     digit = digit_check.index(values[2])
 
     if os.path.splitext(values[1])[1] in [".hwp"]:
@@ -54,7 +54,7 @@ layout = [
     [sg.Input(size=(70, 5)), sg.FileBrowse(button_text="탬플릿선택")],
     [sg.Button(button_text="탬플릿열기", key="OpenTemp")],
     [
-        sg.InputCombo(("소수점없음", "첫째 자리", "둘째 자리"), size=(20, 1), default_value="소수점없음"),
+        sg.InputCombo(("소수점없음", "첫째 자리", "둘째 자리", "셋째 자리", "넷째 자리", "다섯째 자리"), size=(20, 1), default_value="소수점없음"),
         sg.Checkbox("천단위 구분", size=(10, 1), default=True),
     ],
     [sg.Output(size=(80, 20))],
@@ -110,7 +110,7 @@ while True:
 
         if validate_values(values):
             data, output_path, digit, hml_address = validate_values(values)
-
+            
             print("[테스트 페이지 인쇄]")
 
             file_addr = generate_hml(

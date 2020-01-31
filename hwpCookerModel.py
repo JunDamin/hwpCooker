@@ -1,6 +1,6 @@
 from lxml import etree as et
 import pandas as pd
-from numpy import float64
+from numpy import float64, int64
 import re
 import os
 import copy
@@ -20,7 +20,7 @@ def convert_to_string(num, belowZeroDigit=0, thousand=True):
     null_list = [" 00:00:00", "1900-01-01 "]
     num_form = f",.{belowZeroDigit}f" if thousand else f".{belowZeroDigit}f"
 
-    if type(num) in [int, float, float64]:
+    if type(num) in [int, float, float64, int64]:
         if num > 0:
             output = format(num, num_form)
         elif num < 0:
