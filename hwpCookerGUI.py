@@ -6,13 +6,12 @@ import xlwings as xw
 from hwpCookerModel import generate_hml
 import hwpTool as ht
 
-
-
 """
 데이터를 입력받고 생성된 HML 파일을 HWP로 바꾼다.
 """
 
-def validate_values(values):
+
+def validate_values(values, digit_check):
 
     """ 데이터 형식을 실행하기 전에 검토하는 기능임 """
 
@@ -26,7 +25,7 @@ def validate_values(values):
     output_path = ht.check_output_path(os.path.split(values[0])[0])
 
     # 자리수 입력 변환
-    digit_check = list(("소수점없음", "첫째 자리", "둘째 자리", "셋째 자리", "넷째 자리", "다섯째 자리"))
+    
     digit = digit_check.index(values[2])
 
     if os.path.splitext(values[1])[1] in [".hwp"]:
@@ -37,12 +36,14 @@ def validate_values(values):
 
     return data, output_path, digit, hml_address
 
+
 """
 
 아래는 GUI구성
 
 """
 
+digit_check = list(("소수점없음", "첫째 자리", "둘째 자리", "셋째 자리", "넷째 자리", "다섯째 자리"))
 
 sg.change_look_and_feel("TanBlue")
 
@@ -54,7 +55,7 @@ layout = [
     [sg.Input(size=(70, 5)), sg.FileBrowse(button_text="탬플릿선택")],
     [sg.Button(button_text="탬플릿열기", key="OpenTemp")],
     [
-        sg.InputCombo(("소수점없음", "첫째 자리", "둘째 자리", "셋째 자리", "넷째 자리", "다섯째 자리"), size=(20, 1), default_value="소수점없음"),
+        sg.InputCombo((digit_check), size=(20, 1), default_value="소수점없음"),
         sg.Checkbox("천단위 구분", size=(10, 1), default=True),
     ],
     [sg.Output(size=(80, 20))],
@@ -62,7 +63,7 @@ layout = [
     [
         sg.Button(button_text="굽기", key="OK"),
         sg.Button("테스트페이지", key="Test"),
-        sg.Button(button_text="종료", pad=((400,0), 3), key="Cancel"),
+        sg.Button(button_text="종료", pad=((400, 0), 3), key="Cancel"),
     ],
 ]
 
@@ -108,9 +109,8 @@ while True:
 
     if event == "Test":
 
-        if validate_values(values):
-            data, output_path, digit, hml_address = validate_values(values)
-            
+        if validate_values(values, digit_check):
+            data, output_path, digit, hml_address = validate_values(values, digit_check)
             print("[테스트 페이지 인쇄]")
 
             file_addr = generate_hml(
@@ -124,16 +124,16 @@ while True:
             time.sleep(0.2)
             ht.convert_to_hwps(output_path)
             os.remove(hml_address)
-            #출력하기
+            # 출력하기
             print(endText.format(1))
             window.refresh()
-            #생성된 파일 열기
+            # 생성된 파일 열기
             ht.open_hwp_file(file_addr)
 
     if event == "OK":
 
-        if validate_values(values):
-            data, output_path, digit, hml_address = validate_values(values)
+        if validate_values(values, digit_check):
+            data, output_path, digit, hml_address = validate_values(values, digit_check)
 
             file_num = len(data)
             progress = 0
