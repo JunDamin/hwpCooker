@@ -49,15 +49,15 @@ def replace_text(root, old, new):
 
             p_list = p.getparent()
 
-            for i, new_text in enumerate(new.splitlines()):
+            for i, new_line in enumerate(new.splitlines()):
                 new_p = copy.deepcopy(p)
                 for char in new_p.iter("CHAR"):
                     string = char.text
                     if not string:
                         string = ""
                     new_text = string
-                    print(old, ":", new)
-                    new_text = new_text.replace(old, new)
+                    print(old, ":", new_line)
+                    new_text = new_text.replace(old, new_line)
                     char.text = new_text
                 p_list.insert(p_list.index(p) + i, new_p)
             p_list.remove(p)
