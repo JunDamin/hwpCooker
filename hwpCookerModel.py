@@ -87,7 +87,12 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
 
 
 def generate_hml(
-    hml_address, data_series, output_path, name="파일명", belowZeroDigit=0, thousand=True
+    hml_address,
+    data_series,
+    output_path,
+    name="__파일명__",
+    belowZeroDigit=0,
+    thousand=True,
 ):
 
     """ generate hml files. Return generated hml address"""
@@ -98,12 +103,12 @@ def generate_hml(
     tree = root.getroottree()
 
     filename = data_series[name]
-    if len(filename) == 0:
-        filename = "제목없음"
-    elif type(filename) != str:
+
+    if type(filename) != str:
         filename = str(filename)
 
-    filename = prettify_filename(data_series[name])
+    print(filename)
+    filename = prettify_filename(filename)
     file_address = os.path.join(output_path, filename + ".hml")
     tree.write(file=file_address, xml_declaration=True, encoding="utf8")
 
