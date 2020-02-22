@@ -10,20 +10,18 @@ def convert_to_hml(hwp_address):
     return hml_address
 
 
-def convert_to_hwps(folder_address):
+def convert_to_hwp(hml_addr):
 
     hwpapi = HwpApi()
-    hml_list = [
-        os.path.join(folder_address, file)
-        for file in os.listdir(folder_address)
-        if file[-3:] == "hml"
-    ]
 
-    for hml in hml_list:
-        hwpapi.hwpOpen(hml)
-        hwpapi.hwpSaveAs(hml, save_ext=".hwp")
-        hwpapi.hwpFileClose()
-        os.remove(hml)
+    print(hml_addr)
+    if os.path.exists(hml_addr[:-3] + "hwp"):
+        os.remove(hml_addr[:-3] + "hwp")
+        print(hml_addr[:-3] + "hwp")
+    hwpapi.hwpOpen(hml_addr)
+    hwpapi.hwpSaveAs(hml_addr, save_ext=".hwp")
+    hwpapi.hwpFileClose()
+    os.remove(hml_addr)
     hwpapi.hwpQuit()
 
 

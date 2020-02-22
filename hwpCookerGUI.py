@@ -15,7 +15,7 @@ def validate_values(values, digit_check):
 
     """ 데이터 형식을 실행하기 전에 검토하는 기능임 """
 
-    if os.path.splitext(values[0])[1] in [".xls", ".xlsx"]:
+    if os.path.splitext(values[0])[1] in [".xls", ".xlsx", "xlsm"]:
         data = pd.read_excel(values[0])
     else:
         print("오류: 데이터 파일은 엑셀형식만 가능합니다.")
@@ -29,12 +29,12 @@ def validate_values(values, digit_check):
     digit = digit_check.index(values[2])
 
     if os.path.splitext(values[1])[1] in [".hwp"]:
-        hml_address = ht.convert_to_hml(values[1])
+        template_hml_addr = ht.convert_to_hml(values[1])
     else:
         print("오류: 탬플릿 파일은 hwp형식만 가능합니다.")
         return None
 
-    return data, output_path, digit, hml_address
+    return data, output_path, digit, template_hml_addr
 
 
 """
@@ -110,37 +110,41 @@ while True:
     if event == "Test":
 
         if validate_values(values, digit_check):
-            data, output_path, digit, hml_address = validate_values(values, digit_check)
+            data, output_path, digit, template_hml_addr = validate_values(
+                values, digit_check
+            )
             print("[테스트 페이지 인쇄]")
 
-            file_addr = generate_hml(
-                hml_address,
+            hml_addr = generate_hml(
+                template_hml_addr,
                 data.iloc[0],
                 output_path,
                 name=col_name,
                 belowZeroDigit=digit,
                 thousand=values[3],
             )
+            ht.convert_to_hwp(hml_addr)
             time.sleep(0.2)
-            ht.convert_to_hwps(output_path)
-            os.remove(hml_address)
+            os.remove(template_hml_addr)
             # 출력하기
             print(endText.format(1))
             window.refresh()
             # 생성된 파일 열기
-            ht.open_hwp_file(file_addr)
+            ht.open_hwp_file(hml_addr)
 
     if event == "OK":
 
         if validate_values(values, digit_check):
-            data, output_path, digit, hml_address = validate_values(values, digit_check)
+            data, output_path, digit, template_hml_addr = validate_values(
+                values, digit_check
+            )
 
             file_num = len(data)
             progress = 0
 
             for i in data.index:
-                generate_hml(
-                    hml_address,
+                hml_addr = generate_hml(
+                    template_hml_addr,
                     data.loc[i],
                     output_path,
                     name=col_name,
@@ -148,12 +152,11 @@ while True:
                     thousand=values[3],
                 )
                 window.refresh()
-                time.sleep(0.2)
                 progress += 1
                 window["progbar"].update_bar(int(progress / file_num * 1000))
-                ht.convert_to_hwps(output_path)
+                ht.convert_to_hwp(hml_addr)
             # Template 삭제
-            os.remove(hml_address)
+            os.remove(template_hml_addr)
             print(endText.format(len(data)))
 
 window.close()

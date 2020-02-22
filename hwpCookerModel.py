@@ -10,7 +10,7 @@ def prettify_filename(filename):
 
     """ Replacing strings that are not allowed in filename """
 
-    return re.sub(r'[\\\/:*?"<>|.]+', "", filename)
+    return re.sub(r'[\\\/:*?"<>|.%]+', "", filename)
 
 
 def convert_to_string(num, belowZeroDigit=0, thousand=True):
@@ -106,6 +106,5 @@ def generate_hml(
     filename = prettify_filename(data_series[name])
     file_address = os.path.join(output_path, filename + ".hml")
     tree.write(file=file_address, xml_declaration=True, encoding="utf8")
-    file_addr = file_address.replace("\\", "/")[:-3] + "hwp"
 
-    return file_addr
+    return file_address
