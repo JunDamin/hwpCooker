@@ -13,16 +13,18 @@ def convert_to_hml(hwp_address):
 def convert_to_hwp(hml_addr):
 
     hwpapi = HwpApi()
+    hwp_addr = hml_addr[:-3] + "hwp"
 
-    print(hml_addr)
-    if os.path.exists(hml_addr[:-3] + "hwp"):
-        os.remove(hml_addr[:-3] + "hwp")
-        print(hml_addr[:-3] + "hwp")
+    if os.path.exists(hwp_addr):
+        os.remove(hwp_addr)
+        print("중복되어 다음 파일을 삭제합니다. : " + hwp_addr)
     hwpapi.hwpOpen(hml_addr)
     hwpapi.hwpSaveAs(hml_addr, save_ext=".hwp")
     hwpapi.hwpFileClose()
     os.remove(hml_addr)
     hwpapi.hwpQuit()
+
+    return hwp_addr
 
 
 def check_output_path(data_path):

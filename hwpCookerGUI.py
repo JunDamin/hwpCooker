@@ -123,7 +123,6 @@ while True:
                 belowZeroDigit=digit,
                 thousand=values[3],
             )
-            ht.convert_to_hwp(hml_addr)
             time.sleep(0.2)
             os.remove(template_hml_addr)
             # 출력하기
