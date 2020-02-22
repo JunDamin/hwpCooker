@@ -25,7 +25,7 @@ def validate_values(values, digit_check):
     output_path = ht.check_output_path(os.path.split(values[0])[0])
 
     # 자리수 입력 변환
-    
+
     digit = digit_check.index(values[2])
 
     if os.path.splitext(values[1])[1] in [".hwp"]:
@@ -59,7 +59,7 @@ layout = [
         sg.Checkbox("천단위 구분", size=(10, 1), default=True),
     ],
     [sg.Output(size=(80, 20))],
-    [sg.ProgressBar(1000, orientation='h', size=(48.5, 20), key='progbar')],
+    [sg.ProgressBar(1000, orientation="h", size=(48.5, 20), key="progbar")],
     [
         sg.Button(button_text="굽기", key="OK"),
         sg.Button("테스트페이지", key="Test"),
@@ -79,7 +79,7 @@ openText = """
 2. 엑셀 첫번째 행에 "__파일명__"이라는 셀이 있어야 합니다.
 
 주요
-1. 엑셀 첫번째 행 값을 탬플릿에서 찾아 바꾸어줍니다.
+1. 엑셀 첫번째 시틍의 첫번째 행 값을 탬플릿에서 찾아 바꾸어줍니다.
 2. 소수점 자리수를 조정할 수 있습니다.
 3. 천단위 콤마를 고를 수 있습니다.
 ======================================================================
@@ -150,7 +150,7 @@ while True:
                 window.refresh()
                 time.sleep(0.2)
                 progress += 1
-                window['progbar'].update_bar(int(progress/file_num*1000))
+                window["progbar"].update_bar(int(progress / file_num * 1000))
                 ht.convert_to_hwps(output_path)
             # Template 삭제
             os.remove(hml_address)

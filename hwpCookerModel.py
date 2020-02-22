@@ -25,8 +25,10 @@ def convert_to_string(num, belowZeroDigit=0, thousand=True):
             output = format(num, num_form)
         elif num < 0:
             output = "△" + format(-num, num_form)
-        else:
+        elif num == 0:
             output = "-"
+        else:
+            output = "  "
     else:
         output = str(num)
         for n in null_list:
@@ -84,7 +86,9 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
     return root
 
 
-def generate_hml(hml_address, data_series, output_path, name="파일명", belowZeroDigit=0, thousand=True):
+def generate_hml(
+    hml_address, data_series, output_path, name="파일명", belowZeroDigit=0, thousand=True
+):
 
     """ generate hml files. Return generated hml address"""
 
@@ -100,8 +104,8 @@ def generate_hml(hml_address, data_series, output_path, name="파일명", belowZ
         filename = str(filename)
 
     filename = prettify_filename(data_series[name])
-    file_address = os.path.join(output_path, filename + '.hml')
-    tree.write(file=file_address, xml_declaration=True, encoding='utf8')
-    file_addr = file_address.replace("\\", "/")[:-3]+"hwp"
+    file_address = os.path.join(output_path, filename + ".hml")
+    tree.write(file=file_address, xml_declaration=True, encoding="utf8")
+    file_addr = file_address.replace("\\", "/")[:-3] + "hwp"
 
     return file_addr
