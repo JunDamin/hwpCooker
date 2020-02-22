@@ -29,6 +29,9 @@ def convert_to_hwp(hml_addr):
 
 def check_output_path(data_path):
 
+    if not data_path:
+        return None
+
     output_path = os.path.join(data_path, "output")
     if not os.path.isdir(output_path):
         os.mkdir(output_path)

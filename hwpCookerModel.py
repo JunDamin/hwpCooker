@@ -74,14 +74,13 @@ def replace_doc(root, pd_series, name, belowZeroDigit=0, thousand=True):
     for i in pd_series.index:
         old = i
         new = pd_series[i]
-        if not new or type(new) in [pd._libs.tslibs.nattype.NaTType]:
-            new = ""
+        if type(new) in [pd._libs.tslibs.nattype.NaTType]:
+            new = " "
 
         if old.find("__") != -1:
             new = convert_to_string(new, "", False)
         else:
             new = convert_to_string(new, belowZeroDigit, thousand)
-        new = str(new)
         root = replace_text(root, old, new)
     return root
 
@@ -103,13 +102,11 @@ def generate_hml(
     tree = root.getroottree()
 
     filename = data_series[name]
-
     if type(filename) != str:
         filename = str(filename)
-
-    print(filename)
     filename = prettify_filename(filename)
     file_address = os.path.join(output_path, filename + ".hml")
-    tree.write(file=file_address, xml_declaration=True, encoding="utf8")
+
+    tree.write(file=file_address, xml_declaration=True, encoding='utf8')
 
     return file_address

@@ -2,7 +2,6 @@ import os
 import time
 import PySimpleGUI as sg
 import pandas as pd
-import xlwings as xw
 from hwpCookerModel import generate_hml
 import hwpTool as ht
 
@@ -63,11 +62,12 @@ layout = [
     [
         sg.Button(button_text="굽기", key="OK"),
         sg.Button("테스트페이지", key="Test"),
-        sg.Button(button_text="종료", pad=((400, 0), 3), key="Cancel"),
+        sg.Button(button_text="결과물 폴더 열기", pad=((300, 0), 3), key="OutputFolder"),
+        sg.Button(button_text="종료", pad=((5, 0), 3), key="Cancel"),
     ],
 ]
 
-window = sg.Window("빵틀 v.0.2", icon="icon\\email.ico", layout=layout)
+window = sg.Window("빵틀 v.0.2", icon="icon\\stove.ico", layout=layout)
 
 openText = """
 ======================================================================
@@ -105,7 +105,14 @@ while True:
         ht.open_hwp_file(values[1])
 
     if event == "OpenData":
-        xw.Book(values[0])
+        os.startfile(values[0])
+
+    if event == "OutputFolder":
+        output_path = ht.check_output_path(os.path.split(values[0])[0])
+        if not output_path:
+            print("파일을 먼저 지정해주세요.")
+        else:
+            os.startfile(output_path)
 
     if event == "Test":
 
