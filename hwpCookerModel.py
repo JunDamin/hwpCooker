@@ -10,7 +10,7 @@ def prettify_filename(filename):
 
     """ Replacing strings that are not allowed in filename """
 
-    return re.sub(r'[\\\/:*?"<>|.%]+', "", filename)
+    return re.sub(r'[\\\/:*?"<>|.%\n]+', "", filename)
 
 
 def convert_to_string(num, belowZeroDigit=0, thousand=True):
