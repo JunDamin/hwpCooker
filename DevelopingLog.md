@@ -26,11 +26,23 @@
 - 시간 데이터를 어떻게 처리할 것인가?
 
 
-### 
+## 개발환경
 
-### 
+### 가상환경 선택
 
-### 
+
+> (파이썬 경로) -m venv (환경이름)
+> "C:\Program Files (x86)\Microsoft Visual Studio\Shared\Python37_86\python.exe" -m venv bit32
+
+### 패키지 관리
+ 
+pip을 통해 관리
+
+> pip freeze > requirements.txt
+
+을 통해서 패키지 정보를 모을 수 있다.
+
+> pip install -r requirements.txt
 
 ### 
 

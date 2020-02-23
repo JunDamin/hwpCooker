@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['hwpCookerGUI.py'],
-             pathex=['C:\\Users\\user\\Documents\\Python Scripts\\HwpCooker'],
+             pathex=['C:\\Users\\user\\Documents\\Python Scripts\\hwpCooker'],
              binaries=[],
              datas=[],
              hiddenimports=[],

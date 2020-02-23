@@ -3,6 +3,6 @@ build/
 .vscode/
 __pycache__/
 hwpCooker/
-hwp_test.py
-stove.ico
 images/
+bit32/
+hwp_test.py
