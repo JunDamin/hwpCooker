@@ -2,7 +2,7 @@ altgraph==0.17
 entrypoints==0.3
 flake8==3.7.9
 future==0.18.2
-lxml==4.5.0
+lxml==4.6.3
 mccabe==0.6.1
 numpy==1.18.1
 pandas==1.0.1
